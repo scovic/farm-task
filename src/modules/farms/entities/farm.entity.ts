@@ -1,4 +1,5 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { User } from "modules/users/entities/user.entity";
+import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { Coords } from "../types/coords.type";
 
 @Entity()
@@ -24,6 +25,9 @@ export class Farm {
 
   @Column({ type: "jsonb" })
   public coordinates: Coords;
+
+  @ManyToOne(() => User, user => user.farms)
+  public user: User;
 
   @CreateDateColumn()
   public createdAt: Date;

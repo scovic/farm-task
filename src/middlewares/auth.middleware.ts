@@ -17,13 +17,19 @@ export function getAuthMiddleware(authService: AuthService): (req: Request, resp
       return;
     }
 
-    if (!authService.isJwtTokenValid(token)) {
+    const accessToken = await authService.getAccessToken(token);
+
+    if (!accessToken) {
       resp.status(401).send("Unauthorized");
       return;
     }
 
-    const user = await authService.getUserFromJwtToken(token);
-    req.body.user = user;
+    if (!authService.isJwtTokenValid(accessToken.token)) {
+      resp.status(401).send("Unauthorized");
+      return;
+    }
+
+    req.body.user = accessToken.user;
     next();    
   }
 }

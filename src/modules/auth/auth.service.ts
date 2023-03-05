@@ -15,6 +15,10 @@ export class AuthService {
     private readonly usersService: UsersService
   ) { }
 
+  public async getAccessToken(token: string): Promise<AccessToken | null> {
+    return this.accessTokenRepository.findOne({ where: { token }, relations: ["user"]});
+  }
+
   public async login(data: LoginUserDto): Promise<AccessToken> {
     const user = await this.usersService.findOneBy({ email: data.email });
 
