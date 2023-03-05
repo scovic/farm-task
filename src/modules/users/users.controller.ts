@@ -4,10 +4,7 @@ import { UsersService } from "./users.service";
 import { UserDto } from "../auth/dto/user.dto";
 
 export class UsersController {
-  private readonly usersService: UsersService;
-
-  constructor() {
-    this.usersService = new UsersService();
+  constructor(private readonly usersService: UsersService) {
   }
 
   public async create(req: Request, res: Response, next: NextFunction) {

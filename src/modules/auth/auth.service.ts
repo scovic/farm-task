@@ -11,13 +11,10 @@ import dataSource from "orm/orm.config";
 import { User } from "modules/users/entities/user.entity";
 
 export class AuthService {
-  private readonly accessTokenRepository: Repository<AccessToken>;
-  private readonly usersService: UsersService;
-
-  constructor() {
-    this.accessTokenRepository = dataSource.getRepository(AccessToken);
-    this.usersService = new UsersService();
-  }
+  constructor(
+    private readonly accessTokenRepository: Repository<AccessToken>,
+    private readonly usersService: UsersService
+  ) { }
 
   public async login(data: LoginUserDto): Promise<AccessToken> {
     const user = await this.usersService.findOneBy({ email: data.email });

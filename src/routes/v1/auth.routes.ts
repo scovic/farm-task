@@ -1,9 +1,12 @@
-import { RequestHandler, Router } from "express";
+import { Dependency } from "dependency";
+import { Router } from "express";
 import { AuthController } from "modules/auth/auth.controller";
 
-const router = Router();
-const authController = new AuthController();
+export function getAuthRouter(dependency: Dependency) {
+  const router = Router();
+  const authController: AuthController = dependency.getController(AuthController.name) as AuthController;
+  
+  router.post("/login", authController.login);
 
-router.post("/login", authController.login.bind(authController) as RequestHandler);
-
-export default router;
+  return router;
+}

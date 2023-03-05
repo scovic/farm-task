@@ -1,9 +1,12 @@
-import { RequestHandler, Router } from "express";
+import { Dependency } from "dependency";
+import { Router } from "express";
 import { UsersController } from "modules/users/users.controller";
 
-const router = Router();
-const usersController = new UsersController();
+export function getUsersRouter(dependency: Dependency) {
+  const router = Router();
+  const usersController: UsersController = dependency.getController(UsersController.name) as UsersController;
 
-router.post("/", usersController.create.bind(usersController) as RequestHandler);
+  router.post("/", usersController.create);
 
-export default router;
+  return router;
+}

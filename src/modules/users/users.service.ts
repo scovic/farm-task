@@ -4,13 +4,9 @@ import { EntityNotFoundError, UnprocessableEntityError } from "errors/errors";
 import { DeepPartial, FindOptionsWhere, Repository } from "typeorm";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { User } from "./entities/user.entity";
-import dataSource from "orm/orm.config";
 
 export class UsersService {
-  private readonly usersRepository: Repository<User>;
-
-  constructor() {
-    this.usersRepository = dataSource.getRepository(User);
+  constructor(private readonly usersRepository: Repository<User>) {
   }
 
   public async createUser(data: CreateUserDto): Promise<User> {

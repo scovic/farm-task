@@ -1,10 +1,18 @@
+import { Dependency } from "dependency";
 import { Router } from "express";
-import auth from "./auth.routes";
-import user from "./user.routes";
+import { getAuthMiddleware } from "middlewares/auth.middleware";
+import { AuthService } from "modules/auth/auth.service";
+import { getAuthRouter } from "./auth.routes";
+import { getFarmsRouter } from "./farm.routes";
+import { getUsersRouter } from "./user.routes";
 
-const routes = Router();
+export function getV1ApiRouter(dependency: Dependency) {
+  const router = Router();
+  const authService: AuthService = dependency.getService(AuthService.name) as AuthService;
 
-routes.use("/auth", auth);
-routes.use("/users", user);
+  router.use("/auth", getAuthRouter(dependency));
+  router.use("/users", getAuthMiddleware(authService),  getUsersRouter(dependency));
+  router.use("/farms", getAuthMiddleware(authService), getFarmsRouter(dependency));
 
-export default routes;
+  return router;
+}

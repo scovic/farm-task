@@ -1,8 +1,12 @@
+import { Dependency } from "dependency";
 import { Router } from "express";
-import routesv1 from "./v1"
+import { getV1ApiRouter } from "./v1"
 
-const routes = Router();
 
-routes.use("/v1", routesv1);
+export function getApiRouter(dependency: Dependency) {
+  const router = Router();
 
-export default routes;
+  router.use("/v1", getV1ApiRouter(dependency));
+
+  return router;
+}
