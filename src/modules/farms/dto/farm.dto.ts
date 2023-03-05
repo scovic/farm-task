@@ -1,6 +1,6 @@
 import { Expose, Transform } from "class-transformer";
-import { Coords } from "types/coords.type";
 import { Farm } from "../entities/farm.entity";
+import { Coords } from "../types/coords.type";
 
 export class FarmDto {
   constructor(partial?: Partial<FarmDto>) {

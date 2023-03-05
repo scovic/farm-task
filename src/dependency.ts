@@ -5,7 +5,7 @@ import { Farm } from "modules/farms/entities/farm.entity";
 import { FarmListService } from "modules/farms/farm-list.service";
 import { FarmsController } from "modules/farms/farms.controller";
 import { FarmsService } from "modules/farms/farms.service";
-import FarmsRepository, { IFarmsRepository } from "modules/farms/repository/FarmsRepository";
+import FarmsRepository from "modules/farms/repository/FarmsRepository";
 import { User } from "modules/users/entities/user.entity";
 import { UsersController } from "modules/users/users.controller";
 import { UsersService } from "modules/users/users.service";

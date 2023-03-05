@@ -17,7 +17,7 @@ async function bootstrap(): Promise<http.Server> {
   });
 
   const server = http.createServer(app);
-  server.listen(port);
+  server.listen(port, () => console.log(`Listening on port: ${port}`));
 
   return server;
 }

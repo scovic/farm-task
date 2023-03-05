@@ -47,7 +47,7 @@ export class FarmListService {
     return farmList.farms;
   }
 
-  private async calculateDrivingDistance(user: User, farms: Farm[]): Promise<void> {
+  private async calculateDrivingDistance(_user: User, farms: Farm[]): Promise<void> {
     for (let i = 0; i < farms.length; i++) {
       farms[i].drivingDistance = Math.floor(Math.random() * 1000);
     }
@@ -55,7 +55,7 @@ export class FarmListService {
   }
 
   // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
-  private isOutlier(farm: Farm, avgYield: number): boolean {
+  private isOutlier(_farm: Farm, _avgYield: number): boolean {
     return Math.random() > 0.5;
   }
 }

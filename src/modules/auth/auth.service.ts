@@ -7,7 +7,6 @@ import { UsersService } from "modules/users/users.service";
 import { Repository } from "typeorm";
 import { LoginUserDto } from "./dto/login-user.dto";
 import { AccessToken } from "./entities/access-token.entity";
-import dataSource from "orm/orm.config";
 import { User } from "modules/users/entities/user.entity";
 
 export class AuthService {

@@ -1,4 +1,4 @@
-import { EntityNotFoundError, OperationNotPermitted, Unauthorized, UnprocessableEntityError } from "errors/errors";
+import { EntityNotFoundError, OperationNotPermitted, UnprocessableEntityError } from "errors/errors";
 import { NextFunction, Request, Response } from "express";
 
 export function handleErrorMiddleware(error: Error, _: Request, res: Response, next: NextFunction): void {
@@ -10,8 +10,6 @@ export function handleErrorMiddleware(error: Error, _: Request, res: Response, n
     res.status(404).send({ name: "EntityNotFoundError", message });
   } else if (error instanceof OperationNotPermitted) {
     res.status(403).send({ name: "OperationNotPermitted", message });
-  } else if (error instanceof Unauthorized) {
-    res.status(401).send({ name: "Unauthorized", message });
   } else {
     res.status(500).send({ message: "Internal Server Error" });
   }

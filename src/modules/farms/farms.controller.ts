@@ -17,7 +17,7 @@ export class FarmsController {
   public async getAll(req: Request, resp: Response, next: NextFunction) {
     try {
       const { sort, outliers } = req.params;
-      const sorts = sort.split(",");
+      const sorts = sort ? sort.split(",") : "";
       const getAllFarmsDto: GetAllFarmsDto = {
         sortByName: sorts.includes("name"),
         sortByDate: sorts.includes("date"),

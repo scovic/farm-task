@@ -1,9 +1,9 @@
 import { OperationNotPermitted } from "errors/errors";
-import { Coords } from "types/coords.type";
 import { CreateFarmDto } from "./dto/create-farm.dto";
 import { DeleteFarmDto } from "./dto/delete-farm.dto";
 import { Farm } from "./entities/farm.entity";
 import { IFarmsRepository, SaveFarmData } from "./repository/FarmsRepository";
+import { Coords } from "./types/coords.type";
 
 export class FarmsService {
   constructor(private farmsRepository: IFarmsRepository) { }
