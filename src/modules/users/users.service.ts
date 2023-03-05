@@ -1,6 +1,6 @@
 import * as bcrypt from "bcrypt";
 import config from "config/config";
-import { UnprocessableEntityError } from "errors/errors";
+import { EntityNotFoundError, UnprocessableEntityError } from "errors/errors";
 import { DeepPartial, FindOptionsWhere, Repository } from "typeorm";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { User } from "./entities/user.entity";
@@ -27,8 +27,14 @@ export class UsersService {
     return this.usersRepository.save(newUser);
   }
 
-  public async findOneBy(param: FindOptionsWhere<User>): Promise<User | null> {
-    return this.usersRepository.findOneBy({ ...param });
+  public async findOneBy(param: FindOptionsWhere<User>): Promise<User> {
+    const user = await this.usersRepository.findOneBy({ ...param });
+
+    if (!user) {
+      throw new EntityNotFoundError(`Couldn't find user ${JSON.stringify(param)}`)
+    }
+
+    return user
   }
 
   private async hashPassword(password: string, salt_rounds = config.SALT_ROUNDS): Promise<string> {

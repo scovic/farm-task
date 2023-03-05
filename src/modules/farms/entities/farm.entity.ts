@@ -2,18 +2,25 @@ import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateCol
 import { Coords } from "../types/coords.type";
 
 @Entity()
-export class User {
+export class Farm {
   @PrimaryGeneratedColumn("uuid")
   public readonly id: string;
 
-  @Column({ unique: true })
-  public email: string;
+  @Column()
+  public userId: string;
 
   @Column()
-  public hashedPassword: string;
+  public name: string;
 
   @Column()
   public address: string;
+
+  @Column()
+  public size: number;
+
+  // yield is key word in node, hence yieldValue
+  @Column({ name: "yield" }) 
+  public yieldValue: number;
 
   @Column({ type: "jsonb" })
   public coordinates: Coords;
@@ -23,4 +30,6 @@ export class User {
 
   @UpdateDateColumn()
   public updatedAt: Date;
+
+  public drivingDistance: number = 0;
 }

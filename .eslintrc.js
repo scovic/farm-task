@@ -47,5 +47,7 @@ module.exports = {
         ignoreTemplateLiterals: true,
       },
     ],
+    "@typescript-eslint/no-unsafe-member-access": "off",
+    "@typescript-eslint/explicit-member-accessibility": "off"
   },
 };

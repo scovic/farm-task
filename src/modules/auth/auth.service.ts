@@ -8,6 +8,7 @@ import { Repository } from "typeorm";
 import { LoginUserDto } from "./dto/login-user.dto";
 import { AccessToken } from "./entities/access-token.entity";
 import dataSource from "orm/orm.config";
+import { User } from "modules/users/entities/user.entity";
 
 export class AuthService {
   private readonly accessTokenRepository: Repository<AccessToken>;
@@ -44,6 +45,16 @@ export class AuthService {
     });
 
     return this.accessTokenRepository.save(newToken);
+  }
+
+  public async getUserFromJwtToken(token: string): Promise<User> {
+    const { id } = decode(token) as { [id: string]: string };
+    return this.usersService.findOneBy({ id });
+  }
+
+  public isJwtTokenValid(token: string): boolean {
+    const tokenExpireDate = this.getJwtTokenExpireDate(token);
+    return tokenExpireDate > Date.now();
   }
 
   private getJwtTokenExpireDate(token: string): number {
