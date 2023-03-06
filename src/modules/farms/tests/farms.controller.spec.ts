@@ -177,11 +177,12 @@ describe("FarmsController", () => {
       createFarmDto1.userId = user.id;
       createFarmDto2.userId = user.id;
 
-      const [_farm1, _farm2, accessToken] = await Promise.all([
+      await Promise.all([
         farmsService.createFarm(createFarmDto1),
-        farmsService.createFarm(createFarmDto2),
-        authService.login({ email: createUserDto.email, password: createUserDto.password })
+        farmsService.createFarm(createFarmDto2)
       ]);
+
+      const accessToken = await authService.login({ email: createUserDto.email, password: createUserDto.password });
 
       const res = await agent.get(`/api/v1/farms`)
         .set("Authorization", `Bearer ${accessToken.token}`)
@@ -196,11 +197,12 @@ describe("FarmsController", () => {
       createFarmDto1.userId = user.id;
       createFarmDto2.userId = user.id;
 
-      const [_farm1, _farm2, accessToken] = await Promise.all([
+      await Promise.all([
         farmsService.createFarm(createFarmDto1),
-        farmsService.createFarm(createFarmDto2),
-        authService.login({ email: createUserDto.email, password: createUserDto.password })
+        farmsService.createFarm(createFarmDto2)
       ]);
+
+      const accessToken = await authService.login({ email: createUserDto.email, password: createUserDto.password });
 
       const res = await agent.get(`/api/v1/farms?sort=name`)
         .set("Authorization", `Bearer ${accessToken.token}`)
