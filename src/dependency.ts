@@ -1,3 +1,4 @@
+import { DistanceMatrixClient } from "infrastructure/distanceMatrixClient/distanceMatrixClient";
 import { AuthController } from "modules/auth/auth.controller";
 import { AuthService } from "modules/auth/auth.service";
 import { AccessToken } from "modules/auth/entities/access-token.entity";
@@ -5,7 +6,9 @@ import { Farm } from "modules/farms/entities/farm.entity";
 import { FarmListService } from "modules/farms/farm-list.service";
 import { FarmsController } from "modules/farms/farms.controller";
 import { FarmsService } from "modules/farms/farms.service";
-import FarmsRepository from "modules/farms/repository/FarmsRepository";
+import FarmsRepository from "modules/farms/repository/farms.repository";
+import { GeoRepository } from "modules/geo/geo.repository";
+import { GeoService } from "modules/geo/geo.service";
 import { User } from "modules/users/entities/user.entity";
 import { UsersController } from "modules/users/users.controller";
 import { UsersService } from "modules/users/users.service";
@@ -17,6 +20,7 @@ export class Dependency {
     private usersService: UsersService,
     private farmsService: FarmsService,
     private farmListService: FarmListService,
+    private geoService: GeoService,
     private authController: AuthController,
     private usersController: UsersController,
     private farmsController: FarmsController,
@@ -24,14 +28,20 @@ export class Dependency {
 
   public static setupDependency(datasource: DataSource) {
     const farmsRepository = new FarmsRepository(datasource.getRepository(Farm));
+    const geoRepository = new GeoRepository(new DistanceMatrixClient());
 
-    const usersService = new UsersService(datasource.getRepository(User));
+    const geoService = new GeoService(geoRepository);
+    const usersService = new UsersService(datasource.getRepository(User), geoService);
     const authService = new AuthService(
       datasource.getRepository(AccessToken),
       usersService
     );
-    const farmsService = new FarmsService(farmsRepository);
-    const farmListService = new FarmListService(datasource.getRepository(Farm), usersService);
+    const farmsService = new FarmsService(farmsRepository, geoService);
+    const farmListService = new FarmListService(
+      datasource.getRepository(Farm),
+      usersService,
+      geoService
+    );
 
     const authController = new AuthController(authService);
     const usersController = new UsersController(usersService);
@@ -42,6 +52,7 @@ export class Dependency {
       usersService,
       farmsService,
       farmListService,
+      geoService,
 
       authController,
       usersController,
@@ -62,6 +73,9 @@ export class Dependency {
       }
       case FarmListService.name: {
         return this.farmListService;
+      }
+      case GeoService.name: {
+        return this.geoService;
       }
       default:
         throw new Error("Unrecognized service");

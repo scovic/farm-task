@@ -5,7 +5,7 @@ import { setupServer } from "server/server";
 import { disconnectAndClearDatabase } from "helpers/utils";
 import { CreateUserDto } from "modules/users/dto/create-user.dto";
 import { UsersService } from "modules/users/users.service";
-import ds from "orm/orm.config";
+import ds from "infrastructure/orm/orm.config";
 import { AuthService } from "../auth.service";
 import { LoginUserDto } from "../dto/login-user.dto";
 import http, { Server } from "http";

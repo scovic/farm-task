@@ -1,3 +1,4 @@
+import { GeoService } from "modules/geo/geo.service";
 import { User } from "modules/users/entities/user.entity";
 import { UsersService } from "modules/users/users.service";
 import { Repository } from "typeorm";
@@ -8,7 +9,8 @@ import { Farm } from "./entities/farm.entity";
 export class FarmListService {
   constructor (
     private farmsRepository: Repository<Farm>,
-    private usersService: UsersService
+    private usersService: UsersService,
+    private geoService: GeoService
   ) {}
 
   public async getAll(getAllFarmsDto: GetAllFarmsDto) {
@@ -47,11 +49,15 @@ export class FarmListService {
     return farmList.farms;
   }
 
-  private async calculateDrivingDistance(_user: User, farms: Farm[]): Promise<void> {
+  private async calculateDrivingDistance(user: User, farms: Farm[]): Promise<void> {
+    const userCoords = user.coordinates;
+    const calculatedDrivingDistances = await Promise.all(
+      farms.map(farm => this.geoService.calculateDrivingDistance(farm.coordinates, userCoords))
+    );
+
     for (let i = 0; i < farms.length; i++) {
-      farms[i].drivingDistance = Math.floor(Math.random() * 1000);
+      farms[i].drivingDistance = calculatedDrivingDistances[i];
     }
-    return Promise.resolve();
   }
 
   // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars

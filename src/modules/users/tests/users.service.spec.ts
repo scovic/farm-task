@@ -4,7 +4,7 @@ import { Express } from "express";
 import { setupServer } from "server/server";
 import { disconnectAndClearDatabase } from "helpers/utils";
 import http, { Server } from "http";
-import ds from "orm/orm.config";
+import ds from "infrastructure/orm/orm.config";
 import { CreateUserDto } from "../dto/create-user.dto";
 import { User } from "../entities/user.entity";
 import { UsersService } from "../users.service";

@@ -2,7 +2,7 @@ import config from "config/config";
 import { Dependency } from "dependency";
 import { Response } from "express";
 import http from "http";
-import dataSource from "orm/orm.config";
+import dataSource from "infrastructure/orm/orm.config";
 import { setupServer } from "./server/server";
 
 async function bootstrap(): Promise<http.Server> {

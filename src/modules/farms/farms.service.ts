@@ -1,12 +1,15 @@
 import { OperationNotPermitted } from "errors/errors";
+import { GeoService } from "modules/geo/geo.service";
 import { CreateFarmDto } from "./dto/create-farm.dto";
 import { DeleteFarmDto } from "./dto/delete-farm.dto";
 import { Farm } from "./entities/farm.entity";
-import { IFarmsRepository, SaveFarmData } from "./repository/FarmsRepository";
-import { Coords } from "./types/coords.type";
+import { IFarmsRepository, SaveFarmData } from "./repository/farms.repository";
 
 export class FarmsService {
-  constructor(private farmsRepository: IFarmsRepository) { }
+  constructor(
+    private farmsRepository: IFarmsRepository,
+    private geoService: GeoService
+  ) { }
 
   public async createFarm(createFarmDto: CreateFarmDto): Promise<Farm> {
     const { userId, name, address, size, yieldValue } = createFarmDto;
@@ -16,7 +19,7 @@ export class FarmsService {
       address,
       size,
       yieldValue,
-      coordinates: await this.getCoordsByAddress()  
+      coordinates: await this.geoService.getAddressCoordinates(address)  
     };
 
     return this.farmsRepository.save(farmData);
@@ -33,13 +36,5 @@ export class FarmsService {
 
       await this.farmsRepository.delete(farmId);
     }
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
-  public async getCoordsByAddress(): Promise<Coords> {
-    return Promise.resolve({
-      lat: "0.00",
-      lng: "0.00"
-    });
   }
 }

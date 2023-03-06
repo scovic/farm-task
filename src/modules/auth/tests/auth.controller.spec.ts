@@ -3,7 +3,7 @@ import { Express } from "express";
 import http from "http";
 import { CreateUserDto } from "modules/users/dto/create-user.dto";
 import { UsersService } from "modules/users/users.service";
-import ds from "orm/orm.config";
+import ds from "infrastructure/orm/orm.config";
 import * as supertest from "supertest";
 import { setupServer } from "server/server";
 import { disconnectAndClearDatabase } from "helpers/utils";
