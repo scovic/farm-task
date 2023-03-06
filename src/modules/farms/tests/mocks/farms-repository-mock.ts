@@ -4,5 +4,6 @@ export const farmsRepositoryMock: IFarmsRepository = {
   delete: jest.fn(),
   findById: jest.fn(),
   save: jest.fn(),
-  getQueryBuilder: jest.fn()
+  getQueryBuilder: jest.fn(),
+  findByAddress: jest.fn()
 }
