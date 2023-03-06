@@ -1,14 +1,15 @@
+import { EntityNotFoundError } from "errors/errors";
 import { GeoService } from "modules/geo/geo.service";
 import { User } from "modules/users/entities/user.entity";
 import { UsersService } from "modules/users/users.service";
-import { Repository } from "typeorm";
 import { GetAllFarmsDto } from "./dto/get-all-farms.dto";
 import { FarmList } from "./entities/farm-list.entity";
 import { Farm } from "./entities/farm.entity";
+import { IFarmsRepository } from "./repository/farms.repository";
 
 export class FarmListService {
   constructor (
-    private farmsRepository: Repository<Farm>,
+    private farmsRepository: IFarmsRepository,
     private usersService: UsersService,
     private geoService: GeoService
   ) {}
@@ -23,18 +24,22 @@ export class FarmListService {
     } = getAllFarmsDto;
 
     const user = await this.usersService.findOneBy({ id: userId });
-    const qb = this.farmsRepository.createQueryBuilder("farm").select();
+
+    if (!user) {
+      throw new EntityNotFoundError(`User doesn't exists (id ${userId})`)
+    }
+
+    const qb = this.farmsRepository.getQueryBuilder().select();
 
     if (sortByName) { 
-      qb.addOrderBy("farm.name", "ASC");
+      qb.orderBy("farm.name", "ASC");
     }
 
     if (sortByDate) {
       qb.addOrderBy("farm.createdAt", "DESC");
     }
 
-    const farms = await qb.getMany();
-    const farmList = FarmList.create(farms);
+    const farmList = FarmList.create(await qb.getMany());
     await this.calculateDrivingDistance(user, farmList.farms);
 
     if (sortByDrivingDistance) {
@@ -42,7 +47,7 @@ export class FarmListService {
     }
 
     if (filterOutliers) {
-      const avgYield = farmList.getAverageYeild(); // see if you can calculate through db query
+      const avgYield = farmList.getAverageYeild();
       return farmList.farms.filter(farm => this.isOutlier(farm, avgYield))
     }
 
@@ -60,8 +65,9 @@ export class FarmListService {
     }
   }
 
-  // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
-  private isOutlier(_farm: Farm, _avgYield: number): boolean {
-    return Math.random() > 0.5;
+  private isOutlier(farm: Farm, avgYield: number): boolean {
+    const referenceValue = 0.30 * avgYield;
+    return farm.yieldValue === (referenceValue + avgYield) ||
+      farm.yieldValue === (avgYield - referenceValue);
   }
 }

@@ -11,7 +11,7 @@ export function getV1ApiRouter(dependency: Dependency) {
   const authService: AuthService = dependency.getService(AuthService.name) as AuthService;
 
   router.use("/auth", getAuthRouter(dependency));
-  router.use("/users", getAuthMiddleware(authService),  getUsersRouter(dependency));
+  router.use("/users", getUsersRouter(dependency));
   router.use("/farms", getAuthMiddleware(authService), getFarmsRouter(dependency));
 
   return router;

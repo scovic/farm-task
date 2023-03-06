@@ -6,7 +6,7 @@ export function getUsersRouter(dependency: Dependency) {
   const router = Router();
   const usersController: UsersController = dependency.getController(UsersController.name) as UsersController;
 
-  router.post("/", usersController.create);
+  router.post("/", (req, res, next) => usersController.create(req, res, next));
 
   return router;
 }

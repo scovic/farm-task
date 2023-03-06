@@ -1,5 +1,4 @@
-import { User } from "modules/users/entities/user.entity";
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { Coords } from "../types/coords.type";
 
 @Entity()
@@ -16,18 +15,15 @@ export class Farm {
   @Column()
   public address: string;
 
-  @Column()
+  @Column({ type: "float" })
   public size: number;
 
   // yield is key word in node, hence yieldValue
-  @Column({ name: "yield" }) 
+  @Column({ name: "yield", type: "float" }) 
   public yieldValue: number;
 
   @Column({ type: "jsonb" })
   public coordinates: Coords;
-
-  @ManyToOne(() => User, user => user.farms)
-  public user: User;
 
   @CreateDateColumn()
   public createdAt: Date;

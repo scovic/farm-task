@@ -1,4 +1,4 @@
-import { DistanceMatrixClient } from "infrastructure/distanceMatrixClient/distanceMatrixClient";
+import { DistanceMatrixClient } from "infrastructure/distance-matrix-client/distance-matrix-client";
 import { AuthController } from "modules/auth/auth.controller";
 import { AuthService } from "modules/auth/auth.service";
 import { AccessToken } from "modules/auth/entities/access-token.entity";
@@ -11,6 +11,7 @@ import { GeoRepository } from "modules/geo/geo.repository";
 import { GeoService } from "modules/geo/geo.service";
 import { User } from "modules/users/entities/user.entity";
 import { UsersController } from "modules/users/users.controller";
+import UsersRepository from "modules/users/users.repository";
 import { UsersService } from "modules/users/users.service";
 import { DataSource } from "typeorm";
 
@@ -29,16 +30,17 @@ export class Dependency {
   public static setupDependency(datasource: DataSource) {
     const farmsRepository = new FarmsRepository(datasource.getRepository(Farm));
     const geoRepository = new GeoRepository(new DistanceMatrixClient());
+    const usersRepository = new UsersRepository(datasource.getRepository(User));
 
     const geoService = new GeoService(geoRepository);
-    const usersService = new UsersService(datasource.getRepository(User), geoService);
+    const usersService = new UsersService(usersRepository, geoService);
     const authService = new AuthService(
       datasource.getRepository(AccessToken),
       usersService
     );
     const farmsService = new FarmsService(farmsRepository, geoService);
     const farmListService = new FarmListService(
-      datasource.getRepository(Farm),
+      farmsRepository,
       usersService,
       geoService
     );

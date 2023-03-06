@@ -3,8 +3,7 @@ import { AuthService } from "./auth.service";
 import { LoginUserDto } from "./dto/login-user.dto";
 
 export class AuthController {
-  constructor(private readonly authService: AuthService) {
-  }
+  constructor(private readonly authService: AuthService) {}
 
   public async login(req: Request, res: Response, next: NextFunction) {
     try {

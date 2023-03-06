@@ -1,4 +1,4 @@
-import { OperationNotPermitted } from "errors/errors";
+import { EntityAlreadyExistsError, OperationNotPermittedError } from "errors/errors";
 import { GeoService } from "modules/geo/geo.service";
 import { CreateFarmDto } from "./dto/create-farm.dto";
 import { DeleteFarmDto } from "./dto/delete-farm.dto";
@@ -13,6 +13,13 @@ export class FarmsService {
 
   public async createFarm(createFarmDto: CreateFarmDto): Promise<Farm> {
     const { userId, name, address, size, yieldValue } = createFarmDto;
+
+    const farm = await this.farmsRepository.findByAddress(address);
+
+    if (farm) {
+      throw new EntityAlreadyExistsError(`Farm with the address ${address} already exists`);
+    }
+
     const farmData: SaveFarmData = {
       userId,
       name,
@@ -31,7 +38,7 @@ export class FarmsService {
 
     if (farm) {
       if (farm.userId !== authenticatedUserId) {
-        throw new OperationNotPermitted("Can't delete farm that it's not your own");
+        throw new OperationNotPermittedError("Can't delete farm that it's not your own");
       }
 
       await this.farmsRepository.delete(farmId);

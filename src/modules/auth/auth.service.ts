@@ -1,8 +1,8 @@
 import * as bcrypt from "bcrypt";
 import config from "config/config";
 import { fromUnixTime } from "date-fns";
-import { UnprocessableEntityError } from "errors/errors";
-import { decode, sign } from "jsonwebtoken";
+import { EntityNotFoundError, UnprocessableEntityError } from "errors/errors";
+import { decode, sign, verify } from "jsonwebtoken";
 import { UsersService } from "modules/users/users.service";
 import { Repository } from "typeorm";
 import { LoginUserDto } from "./dto/login-user.dto";
@@ -49,12 +49,24 @@ export class AuthService {
 
   public async getUserFromJwtToken(token: string): Promise<User> {
     const { id } = decode(token) as { [id: string]: string };
-    return this.usersService.findOneBy({ id });
+    const user = await this.usersService.findOneBy({ id });
+
+    if (!user) {
+      throw new EntityNotFoundError(`User doens't exists (id ${id})`)
+    }
+
+    return user
   }
 
   public isJwtTokenValid(token: string): boolean {
+    try {
+      verify(token, config.JWT_SECRET);
+    } catch (err) {
+      return false;
+    }
+
     const tokenExpireDate = this.getJwtTokenExpireDate(token);
-    return tokenExpireDate > Date.now();
+    return tokenExpireDate * 1000 > Date.now();
   }
 
   private getJwtTokenExpireDate(token: string): number {

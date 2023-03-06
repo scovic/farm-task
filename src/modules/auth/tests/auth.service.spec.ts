@@ -9,15 +9,18 @@ import ds from "infrastructure/orm/orm.config";
 import { AuthService } from "../auth.service";
 import { LoginUserDto } from "../dto/login-user.dto";
 import http, { Server } from "http";
+import { Dependency } from "dependency";
 
 describe("AuthService", () => {
   let app: Express;
   let usersService: UsersService;
+  let dependency: Dependency;
   let authService: AuthService;
   let server: Server;
 
   beforeAll(() => {
-    app = setupServer();
+    dependency = Dependency.setupDependency(ds);
+    app = setupServer(dependency);
     server = http.createServer(app).listen(config.APP_PORT);
   });
 
@@ -28,8 +31,8 @@ describe("AuthService", () => {
   beforeEach(async () => {
     await ds.initialize();
 
-    usersService = new UsersService();
-    authService = new AuthService();
+    usersService = dependency.getService(UsersService.name) as UsersService;
+    authService = dependency.getService(AuthService.name) as AuthService;
   });
 
   afterEach(async () => {
@@ -37,11 +40,12 @@ describe("AuthService", () => {
   });
 
   describe(".login", () => {
+    const createUserDto: CreateUserDto = { email: "user@test.com", password: "password", address: "address" }
     const loginDto: LoginUserDto = { email: "user@test.com", password: "password" };
     const createUser = async (userDto: CreateUserDto) => usersService.createUser(userDto);
 
     it("should create access token for existing user", async () => {
-      await createUser(loginDto);
+      await createUser(createUserDto);
 
       const { token } = await authService.login(loginDto);
 
@@ -56,7 +60,7 @@ describe("AuthService", () => {
     });
 
     it("should throw UnprocessableEntityError when user logs in with invalid password", async () => {
-      await createUser(loginDto);
+      await createUser(createUserDto);
 
       await authService.login({ email: loginDto.email, password: "invalidPassword" }).catch((error: UnprocessableEntityError) => {
         expect(error).toBeInstanceOf(UnprocessableEntityError);

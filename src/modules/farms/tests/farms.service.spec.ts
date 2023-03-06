@@ -1,15 +1,29 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { OperationNotPermitted } from "errors/errors";
+import { OperationNotPermittedError } from "errors/errors";
 import { CreateFarmDto } from "../dto/create-farm.dto";
 import { DeleteFarmDto } from "../dto/delete-farm.dto";
 import { Farm } from "../entities/farm.entity";
 import { FarmsService } from "../farms.service";
-import { farmsRepositoryMock } from "./mocks/FarmsRepositoryMock";
+import { farmsRepositoryMock } from "./mocks/farms-repository-mock";
+
+jest.mock("modules/geo/geo.service", () => {
+  return {
+    GeoService: jest.fn().mockImplementation(() => ({
+      getAddressCoordinates: jest.fn(),
+      calculateDrivingDistance: jest.fn()
+    }))
+  }
+});
+
+import { GeoService } from "modules/geo/geo.service";
+import { geoRepositoryMock } from "./mocks/geo-repository-mock";
 
 let farmsService: FarmsService;
+let geoService: GeoService;
 
 beforeEach(() => {
-  farmsService = new FarmsService(farmsRepositoryMock);
+  geoService = new GeoService(geoRepositoryMock);
+  farmsService = new FarmsService(farmsRepositoryMock, geoService);
 })
 
 afterEach(() => {
@@ -35,7 +49,7 @@ const farmEntityMock: Farm = {
 describe("FarmsService", () => {
   describe("createFarm", () => {
     it("should create new farm", async () => {
-      jest.spyOn(farmsService, "getCoordsByAddress").mockResolvedValue({
+      jest.spyOn(geoService, "getAddressCoordinates").mockResolvedValue({
         lat: "0.0",
         lng: "0.0"
       });
@@ -76,7 +90,7 @@ describe("FarmsService", () => {
       expect(farmsRepositoryMock.delete).toBeCalledWith("id")
     })
 
-    it("should throw an OperationNotPermittedError when trying to delete other users farm", async () => {
+    it("should throw an OperationNotPermittedErrorError when trying to delete other users farm", async () => {
       jest.spyOn(farmsRepositoryMock, "findById").mockResolvedValue(farmEntityMock);
 
       const deleteFarmDto: DeleteFarmDto = {
@@ -92,7 +106,7 @@ describe("FarmsService", () => {
       }
 
       expect(error).not.toBeNull();
-      expect(error).toBeInstanceOf(OperationNotPermitted);
+      expect(error).toBeInstanceOf(OperationNotPermittedError);
     })
   })
 })

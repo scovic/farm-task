@@ -6,7 +6,7 @@ export function getAuthRouter(dependency: Dependency) {
   const router = Router();
   const authController: AuthController = dependency.getController(AuthController.name) as AuthController;
   
-  router.post("/login", authController.login);
+  router.post("/login", (req, res, next) => authController.login(req, res, next));
 
   return router;
 }

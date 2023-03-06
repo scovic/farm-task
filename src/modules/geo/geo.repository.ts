@@ -1,5 +1,5 @@
-import { DistanceMatrixClient } from "infrastructure/distanceMatrixClient/distanceMatrixClient";
-import { Status } from "infrastructure/distanceMatrixClient/types/status.type";
+import { DistanceMatrixClient } from "infrastructure/distance-matrix-client/distance-matrix-client";
+import { Status } from "infrastructure/distance-matrix-client/types/status.type";
 import { Coords } from "./types/coords.type";
 
 export interface IGeoRepository {
@@ -7,6 +7,8 @@ export interface IGeoRepository {
   getAddressCoordinates(address: string): Promise<Coords>;
 }
 
+// had problem with getting the api key from distanceMatrix client, so 
+// for the purpose of testing, i would usually hardcode return values of GeoRepositoryFunctions
 export class GeoRepository implements IGeoRepository {
   constructor (private distanceMatrixClient: DistanceMatrixClient) {}
 

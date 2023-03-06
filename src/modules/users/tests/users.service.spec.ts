@@ -1,5 +1,5 @@
 import config from "config/config";
-import { UnprocessableEntityError } from "errors/errors";
+import { EntityAlreadyExistsError } from "errors/errors";
 import { Express } from "express";
 import { setupServer } from "server/server";
 import { disconnectAndClearDatabase } from "helpers/utils";
@@ -8,15 +8,18 @@ import ds from "infrastructure/orm/orm.config";
 import { CreateUserDto } from "../dto/create-user.dto";
 import { User } from "../entities/user.entity";
 import { UsersService } from "../users.service";
+import { Dependency } from "dependency";
 
-describe("UsersController", () => {
+describe("UsersService", () => {
   let app: Express;
   let server: Server;
+  let dependency: Dependency;
 
   let usersService: UsersService;
 
   beforeAll(() => {
-    app = setupServer();
+    dependency = Dependency.setupDependency(ds);
+    app = setupServer(dependency);
     server = http.createServer(app).listen(config.APP_PORT);
   });
 
@@ -26,7 +29,7 @@ describe("UsersController", () => {
 
   beforeEach(async () => {
     await ds.initialize();
-    usersService = new UsersService();
+    usersService = dependency.getService(UsersService.name) as UsersService;
   });
 
   afterEach(async () => {
@@ -34,7 +37,7 @@ describe("UsersController", () => {
   });
 
   describe(".createUser", () => {
-    const createUserDto: CreateUserDto = { email: "user@test.com", password: "password" };
+    const createUserDto: CreateUserDto = { email: "user@test.com", password: "password", address: "1600 Amphitheatre Parkway, Mountain View, CA" };
 
     it("should create new user", async () => {
       const createdUser = await usersService.createUser(createUserDto);
@@ -47,8 +50,8 @@ describe("UsersController", () => {
       });
 
       it("should throw UnprocessableEntityError if user already exists", async () => {
-        await usersService.createUser(createUserDto).catch((error: UnprocessableEntityError) => {
-          expect(error).toBeInstanceOf(UnprocessableEntityError);
+        await usersService.createUser(createUserDto).catch((error: EntityAlreadyExistsError) => {
+          expect(error).toBeInstanceOf(EntityAlreadyExistsError);
           expect(error.message).toBe("A user for the email already exists");
         });
       });
@@ -56,7 +59,7 @@ describe("UsersController", () => {
   });
 
   describe(".findOneBy", () => {
-    const createUserDto: CreateUserDto = { email: "user@test.com", password: "password" };
+    const createUserDto: CreateUserDto = { email: "user@test.com", password: "password", address: "1600 Amphitheatre Parkway, Mountain View, CA" };
 
     it("should get user by provided param", async () => {
       const user = await usersService.createUser(createUserDto);

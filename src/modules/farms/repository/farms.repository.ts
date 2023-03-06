@@ -1,4 +1,4 @@
-import { Repository } from "typeorm";
+import { Repository, SelectQueryBuilder } from "typeorm";
 import { Farm } from "../entities/farm.entity";
 
 export type SaveFarmData = Omit<Farm, 
@@ -10,16 +10,22 @@ export type SaveFarmData = Omit<Farm,
 >
 
 export interface IFarmsRepository {
-  findById(id: string): Promise<Farm | null>
+  findById(id: string): Promise<Farm | null>;
+  findByAddress(address: string): Promise<Farm | null>;
   save(farm: SaveFarmData): Promise<Farm>;
-  delete(id: string): Promise<void>
+  delete(id: string): Promise<void>;
+  getQueryBuilder(): SelectQueryBuilder<Farm>;
 }
 
 export default class FarmsRepository implements IFarmsRepository {
   constructor(private farmsRepository: Repository<Farm>) {}
 
   public findById(id: string): Promise<Farm | null> {
-    return this.farmsRepository.findOne({ where: { id: id }})
+    return this.farmsRepository.findOne({ where: { id }});
+  }
+
+  public findByAddress(address: string): Promise<Farm | null> {
+    return this.farmsRepository.findOne({ where: { address }});
   }
 
   public save(farm: SaveFarmData): Promise<Farm> {
@@ -28,5 +34,9 @@ export default class FarmsRepository implements IFarmsRepository {
 
   public async delete(id: string): Promise<void> {
     await this.farmsRepository.delete({ id });
+  }
+
+  public getQueryBuilder(): SelectQueryBuilder<Farm> {
+    return this.farmsRepository.createQueryBuilder("farm");
   }
 }

@@ -1,8 +1,8 @@
 import config from "config/config";
 import { Coords } from "modules/farms/types/coords.type";
 import fetch from "node-fetch";
-import { GetAddressCoordsResponse } from "./types/getAddressCoordsResponse.type";
-import { CalculateDistanceResponse } from "./types/calculateDistanceResponse.type";
+import { GetAddressCoordsResponse } from "./types/get-address-coords-response.type";
+import { CalculateDistanceResponse } from "./types/calculate-distance-response.type";
 
 export class DistanceMatrixClient {
   private distanceMatrixApiUrl: string;

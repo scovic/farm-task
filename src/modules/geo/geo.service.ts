@@ -1,9 +1,9 @@
-import { GeoRepository } from "./geo.repository";
+import { IGeoRepository } from "./geo.repository";
 import { Coords } from "./types/coords.type";
 
 export class GeoService {
   constructor (
-    private geoRepository: GeoRepository
+    private geoRepository: IGeoRepository
   ) {}
 
   public getAddressCoordinates(address: string): Promise<Coords> {
