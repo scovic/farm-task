@@ -13,6 +13,8 @@ import { FarmsService } from "../farms.service";
 import { UsersService } from "modules/users/users.service";
 // import { FarmListService } from "../farm-list.service";
 
+jest.setTimeout(40000);
+
 describe("FarmsController", () => {
   let app: Express;
   let agent: SuperAgentTest;
@@ -49,10 +51,22 @@ describe("FarmsController", () => {
   });
 
   describe("POST /farms", () => {
-    const createUserDto: CreateUserDto = { email: "user@test.com", password: "password", address: "1600 Amphitheatre Parkway, Mountain View, CA" };
+    const createUserDto: CreateUserDto = { 
+      email: "user@test.com",
+      password: "password",
+      address: {
+        countryCode: "US",
+        city: "Chesterfield",
+        addressLine: "7836 Winding Ash Rd"
+      } 
+    };
 
     const createFarmDto: CreateFarmDto = {
-      address: "7704 South Ryan Lane, Montebello, CA",
+      address: {
+        addressLine: "170 N 100th E",
+        city: "Manti",
+        countryCode: "US"
+      },
       name: "farm",
       size: 20.3,
       userId: "",
@@ -84,29 +98,25 @@ describe("FarmsController", () => {
         updatedAt: expect.any(String),
       })
     })
-
-    it("should throw EntityAlreadyExistsError if user already exists", async () => {
-      const user = await usersService.createUser(createUserDto);
-      createFarmDto.userId = user.id;
-      const accessToken = await authService.login({ email: createUserDto.email, password: createUserDto.password });
-      await farmsService.createFarm(createFarmDto);
-
-      const res = await agent.post("/api/v1/farms")
-        .set("Authorization", `Bearer ${accessToken.token}`)
-        .send(createFarmDto);
-
-      expect(res.statusCode).toBe(409);
-      expect(res.body).toMatchObject({
-        name: "EntityAlreadyExistsError",
-        message: `Farm with the address ${createFarmDto.address} already exists`,
-      });
-    })
   })
 
   describe("DELETE /farms/:id", () => {
-    const createUserDto: CreateUserDto = { email: "user@test.com", password: "password", address: "1600 Amphitheatre Parkway, Mountain View, CA" };
+    const createUserDto: CreateUserDto = { 
+      email: "user@test.com",
+      password: "password",
+      address: {
+        countryCode: "US",
+        city: "Chesterfield",
+        addressLine: "7836 Winding Ash Rd"
+      } 
+    };
+
     const createFarmDto: CreateFarmDto = {
-      address: "7704 South Ryan Lane, Montebello, CA",
+      address: {
+        addressLine: "170 N 100th E",
+        city: "Manti",
+        countryCode: "US"
+      },
       name: "farm",
       size: 20.3,
       userId: "",
@@ -155,9 +165,22 @@ describe("FarmsController", () => {
   })
 
   describe("GET /farms", () => {
-    const createUserDto: CreateUserDto = { email: "user@test.com", password: "password", address: "1600 Amphitheatre Parkway, Mountain View, CA" };
+    const createUserDto: CreateUserDto = { 
+      email: "user@test.com",
+      password: "password",
+      address: {
+        countryCode: "US",
+        city: "Chesterfield",
+        addressLine: "7836 Winding Ash Rd"
+      } 
+    };
+
     const createFarmDto1: CreateFarmDto = {
-      address: "7704 South Ryan Lane, Montebello, CA",
+      address: {
+        addressLine: "170 N 100th E",
+        city: "Manti",
+        countryCode: "US"
+      },
       name: "b farm",
       size: 20.3,
       userId: "",
@@ -165,7 +188,11 @@ describe("FarmsController", () => {
     }
 
     const createFarmDto2: CreateFarmDto = {
-      address: "292 Canterbury Dr. Fort Wayne, IN",
+      address: {
+        addressLine: "8091 Spruce Trl",
+        city: "Eden Prairie",
+        countryCode: "US"
+      },
       name: "a farm",
       size: 14.3,
       userId: "",

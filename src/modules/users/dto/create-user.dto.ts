@@ -1,4 +1,5 @@
 import { IsEmail, IsNotEmpty, IsString } from "class-validator";
+import { Address } from "modules/geo/types/address.type";
 
 export class CreateUserDto {
   @IsEmail()
@@ -9,7 +10,6 @@ export class CreateUserDto {
   @IsNotEmpty()
   public password: string;
 
-  @IsString()
   @IsNotEmpty()
-  public address: string;
+  public address: Address;
 }

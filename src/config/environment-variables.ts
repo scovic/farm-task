@@ -41,11 +41,15 @@ export class EnvironmentVariables {
   @IsNotEmpty()
   public JWT_SECRET: string;
 
-  @IsNumber()
+  @IsString()
   @IsNotEmpty()
-  public JWT_EXPIRES_AT: number;
+  public JWT_EXPIRES_AT: string;
 
   @IsString()
   @IsNotEmpty()
   public DISTANCE_MATRIX_API_KEY: string;
+
+  @IsString()
+  @IsNotEmpty()
+  public BING_MAPS_KEY: string
 }

@@ -1,5 +1,11 @@
+import { IsNotEmpty, IsString } from "class-validator";
 
-export type Coords = {
-  lat: string;
-  lng: string;
-};
+export class Coords {
+  @IsString()
+  @IsNotEmpty()
+  public lat: string;
+  
+  @IsString()
+  @IsNotEmpty()
+  public lng: string;
+}

@@ -1,39 +1,67 @@
-import { DistanceMatrixClient } from "infrastructure/distance-matrix-client/distance-matrix-client";
-import { Status } from "infrastructure/distance-matrix-client/types/status.type";
+import { UnprocessableEntityError } from "errors/errors";
+import { BingMapClient } from "infrastructure/bing-maps-client/bing-map-client";
+// import { DistanceMatrixClient } from "infrastructure/distance-matrix-client/distance-matrix-client";
+// import { Status } from "infrastructure/distance-matrix-client/types/status.type";
+import { Address } from "./types/address.type";
 import { Coords } from "./types/coords.type";
 
 export interface IGeoRepository {
   calculateDistance(from: Coords, to: Coords): Promise<number>;
-  getAddressCoordinates(address: string): Promise<Coords>;
+  getAddressCoordinates(address: Address | string): Promise<Coords>;
 }
 
-// had problem with getting the api key from distanceMatrix client, so 
-// for the purpose of testing, i would usually hardcode return values of GeoRepositoryFunctions
+// Had to switch to bing maps api, didn't get api key in time for distance matrix client
 export class GeoRepository implements IGeoRepository {
-  constructor (private distanceMatrixClient: DistanceMatrixClient) {}
+  constructor (
+    // private distanceMatrixClient: DistanceMatrixClient,
+    private bingMapsClient: BingMapClient
+  ) {}
 
   public async calculateDistance(from: Coords, to: Coords): Promise<number> {
-    const response = await this.distanceMatrixClient.calculateDistance(from, to);
+    const resp = await this.bingMapsClient.calculateDistance(from, to);
 
-    if (response.status !== Status.OK) {
-      throw new Error(`Couldn't calculate distance (status: ${response.status})`);
+    if (resp.results.length === 0 || resp.results[0].hasError) {
+      throw new UnprocessableEntityError("Couldn't calculate the distance");
     }
 
-    return response.rows[0].elements[0].distance.value;
+    return resp.results[0].travelDistance * 1000; // from km to m
   }
 
-  public async getAddressCoordinates(address: string): Promise<Coords> {
-    const response = await this.distanceMatrixClient.getAdddressCoords(address);
-
-    if (response.status !== Status.OK) {
-      throw new Error(`Couldn't get coords of the address (status: ${response.status})`);
+  public async getAddressCoordinates(address: Address | string): Promise<Coords> {
+    if (typeof address === "string") {
+      throw new Error("Can't handle address as a string")
     }
 
-    const { lat, lng } = response.result[0].geometry.geometry;
+    const resp = await this.bingMapsClient.getAddressCoords(address);
 
     return {
-      lat: `${lat}`,
-      lng: `${lng}`
+      lat: `${resp.point.coordinates[0]}`,
+      lng: `${resp.point.coordinates[1]}`
     }
   }
+
+  // public async calculateDistance(from: Coords, to: Coords): Promise<number> {
+  //   const response = await this.distanceMatrixClient.calculateDistance(from, to);
+
+  //   if (response.status !== Status.OK) {
+  //     throw new Error(`Couldn't calculate distance (status: ${response.status})`);
+  //   }
+
+  //   return response.rows[0].elements[0].distance.value;
+  // }
+
+  // public async getAddressCoordinates(address: string): Promise<Coords> {
+  //   const response = await this.distanceMatrixClient.getAdddressCoords(address);
+
+  //   if (response.status !== Status.OK) {
+  //     throw new Error(`Couldn't get coords of the address (status: ${response.status})`);
+  //   }
+
+  //   const { lat, lng } = response.result[0].geometry.geometry;
+
+  //   return {
+  //     lat: `${lat}`,
+  //     lng: `${lng}`
+  //   }
+  // }
 }

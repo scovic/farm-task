@@ -1,3 +1,4 @@
+import { Address } from "modules/geo/types/address.type";
 import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { Coords } from "../types/coords.type";
 
@@ -12,8 +13,8 @@ export class Farm {
   @Column()
   public name: string;
 
-  @Column()
-  public address: string;
+  @Column({ type: "jsonb" })
+  public address: Address;
 
   @Column({ type: "float" })
   public size: number;

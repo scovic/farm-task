@@ -30,6 +30,7 @@ export class FarmsController {
       const farms = await this.farmListService.getAll(getAllFarmsDto);
       resp.status(200).send(FarmListDto.createFromFarmList(farms));
     } catch (error) {
+      console.log(error)
       next(error);
     }
   }

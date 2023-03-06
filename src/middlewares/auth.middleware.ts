@@ -25,7 +25,6 @@ export function getAuthMiddleware(authService: AuthService): (req: Request, resp
     }
 
     if (!authService.isJwtTokenValid(accessToken.token)) {
-      console.log("!authService.isJwtTokenValid(accessToken.token)")
       resp.status(401).send("Unauthorized");
       return;
     }

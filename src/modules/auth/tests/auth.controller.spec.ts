@@ -11,6 +11,8 @@ import { LoginUserDto } from "../dto/login-user.dto";
 import { AccessToken } from "../entities/access-token.entity";
 import { Dependency } from "dependency";
 
+jest.setTimeout(10000);
+
 describe("AuthController", () => {
   let app: Express;
   let dp: Dependency;
@@ -41,7 +43,15 @@ describe("AuthController", () => {
   });
 
   describe("POST /auth", () => {
-    const createUserDto: CreateUserDto = { email: "user@test.com", password: "password", address: "address" };
+    const createUserDto: CreateUserDto = { 
+      email: "user@test.com",
+      password: "password",
+      address: {
+        countryCode: "US",
+        city: "Chesterfield",
+        addressLine: "7836 Winding Ash Rd"
+      } 
+    };
     const createUser = async (userDto: CreateUserDto) => usersService.createUser(userDto);
     const loginDto: LoginUserDto = { email: "user@test.com", password: "password" };
 

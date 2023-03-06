@@ -40,7 +40,15 @@ describe("AuthService", () => {
   });
 
   describe(".login", () => {
-    const createUserDto: CreateUserDto = { email: "user@test.com", password: "password", address: "address" }
+    const createUserDto: CreateUserDto = { 
+      email: "user@test.com",
+      password: "password",
+      address: {
+        countryCode: "US",
+        city: "Chesterfield",
+        addressLine: "7836 Winding Ash Rd"
+      } 
+    };
     const loginDto: LoginUserDto = { email: "user@test.com", password: "password" };
     const createUser = async (userDto: CreateUserDto) => usersService.createUser(userDto);
 

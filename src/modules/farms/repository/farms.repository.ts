@@ -11,7 +11,6 @@ export type SaveFarmData = Omit<Farm,
 
 export interface IFarmsRepository {
   findById(id: string): Promise<Farm | null>;
-  findByAddress(address: string): Promise<Farm | null>;
   save(farm: SaveFarmData): Promise<Farm>;
   delete(id: string): Promise<void>;
   getQueryBuilder(): SelectQueryBuilder<Farm>;
@@ -22,10 +21,6 @@ export default class FarmsRepository implements IFarmsRepository {
 
   public findById(id: string): Promise<Farm | null> {
     return this.farmsRepository.findOne({ where: { id }});
-  }
-
-  public findByAddress(address: string): Promise<Farm | null> {
-    return this.farmsRepository.findOne({ where: { address }});
   }
 
   public save(farm: SaveFarmData): Promise<Farm> {

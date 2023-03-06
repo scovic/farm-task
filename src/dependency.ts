@@ -1,4 +1,5 @@
-import { DistanceMatrixClient } from "infrastructure/distance-matrix-client/distance-matrix-client";
+import { BingMapClient } from "infrastructure/bing-maps-client/bing-map-client";
+// import { DistanceMatrixClient } from "infrastructure/distance-matrix-client/distance-matrix-client";
 import { AuthController } from "modules/auth/auth.controller";
 import { AuthService } from "modules/auth/auth.service";
 import { AccessToken } from "modules/auth/entities/access-token.entity";
@@ -29,7 +30,8 @@ export class Dependency {
 
   public static setupDependency(datasource: DataSource) {
     const farmsRepository = new FarmsRepository(datasource.getRepository(Farm));
-    const geoRepository = new GeoRepository(new DistanceMatrixClient());
+    // const geoRepository = new GeoRepository(new DistanceMatrixClient());
+    const geoRepository = new GeoRepository(new BingMapClient());
     const usersRepository = new UsersRepository(datasource.getRepository(User));
 
     const geoService = new GeoService(geoRepository);

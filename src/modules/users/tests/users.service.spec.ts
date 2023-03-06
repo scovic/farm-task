@@ -10,6 +10,8 @@ import { User } from "../entities/user.entity";
 import { UsersService } from "../users.service";
 import { Dependency } from "dependency";
 
+jest.setTimeout(10000);
+
 describe("UsersService", () => {
   let app: Express;
   let server: Server;
@@ -37,7 +39,15 @@ describe("UsersService", () => {
   });
 
   describe(".createUser", () => {
-    const createUserDto: CreateUserDto = { email: "user@test.com", password: "password", address: "1600 Amphitheatre Parkway, Mountain View, CA" };
+    const createUserDto: CreateUserDto = { 
+      email: "user@test.com",
+      password: "password",
+      address: {
+        countryCode: "US",
+        city: "Chesterfield",
+        addressLine: "7836 Winding Ash Rd"
+      } 
+    };
 
     it("should create new user", async () => {
       const createdUser = await usersService.createUser(createUserDto);
@@ -59,11 +69,19 @@ describe("UsersService", () => {
   });
 
   describe(".findOneBy", () => {
-    const createUserDto: CreateUserDto = { email: "user@test.com", password: "password", address: "1600 Amphitheatre Parkway, Mountain View, CA" };
+    const createUserDto: CreateUserDto = { 
+      email: "user@test.com",
+      password: "password",
+      address: {
+        countryCode: "US",
+        city: "Chesterfield",
+        addressLine: "7836 Winding Ash Rd"
+      } 
+    };
 
     it("should get user by provided param", async () => {
       const user = await usersService.createUser(createUserDto);
-      const foundUser = await usersService.findOneBy({ email: user?.email });
+      const foundUser = await usersService.findOneBy({ email: user.email });
 
       expect(foundUser).toMatchObject({ ...user });
     });

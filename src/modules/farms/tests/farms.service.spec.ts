@@ -34,7 +34,11 @@ const farmEntityMock: Farm = {
   id: "id",
   userId: "user1",
   name: "name",
-  address: "address",
+  address: {
+    addressLine: "170 N 100th E",
+    city: "Manti",
+    countryCode: "US"
+  },
   coordinates: {
     lat: "23.24",
     lng: "32.12"
@@ -55,7 +59,11 @@ describe("FarmsService", () => {
       });
 
       const createFarmDto: CreateFarmDto = {
-        address: "Some address",
+        address: {
+          addressLine: "8091 Spruce Trl",
+          city: "Eden Prairie",
+          countryCode: "US"
+        },
         name: "My farm",
         size: 5,
         userId: "userId",

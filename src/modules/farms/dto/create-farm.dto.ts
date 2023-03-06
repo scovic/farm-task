@@ -1,4 +1,5 @@
 import { IsNotEmpty, IsNumber, IsString, IsUUID } from "class-validator";
+import { Address } from "modules/geo/types/address.type";
 
 export class CreateFarmDto {
   @IsUUID()
@@ -10,9 +11,8 @@ export class CreateFarmDto {
   @IsNotEmpty()
   public name: string;
 
-  @IsString() // maybe add custom validator for an address
   @IsNotEmpty()
-  public address: string;
+  public address: Address;
 
   @IsNumber()
   @IsNotEmpty()

@@ -1,4 +1,5 @@
 import { Expose, Transform } from "class-transformer";
+import { Address } from "modules/geo/types/address.type";
 import { Farm } from "../entities/farm.entity";
 import { Coords } from "../types/coords.type";
 
@@ -17,7 +18,7 @@ export class FarmDto {
   public name: string;
 
   @Expose()
-  public address: string;
+  public address: Address;
 
   @Expose()
   public yieldValue: number;
